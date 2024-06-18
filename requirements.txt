@@ -1,0 +1,16 @@
+# Required libraries for NetThreatTracer
+
+# Capture the network traffic packages library
+scapy
+
+# Manipulate and analyze the data
+numpy, pandas
+
+# Visualization
+matplotlib
+
+# Deep learning model creation
+torch
+
+# Python graphic user interface tools
+tk

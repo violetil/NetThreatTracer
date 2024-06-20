@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import torch
 from torch import nn
 from scapy.all import sniff, IP
@@ -28,6 +29,17 @@ def analyze_data(data):
     output = model(input_data)
     return output.argmax().item() # Return the result of prediction index
 
+    
+def extract_features(packet):
+  features = [
+    packet["timestamp"],
+    len(packet["src_ip"]),
+    len(packet["dst_ip"]),
+    1 if packet["protocol"] == "TCP" else 0,
+    packet["length"]
+  ]
+  return features
+
   
 def process_packet(packet):
   if IP in packet:
@@ -56,5 +68,12 @@ if __name__ == "__main__":
   print("Start capture network traffic data...")
   sniff(prn=packet_callback, store=0, count=100)
   df = pd.DataFrame(packet_data)
-  print("Done, write into csv file.")
+  print("Done, write into data folder!")
   df.to_csv("data/network_traffic.csv", index=False)
+
+  print("Start deep learning model prediction...")
+  features = df.apply(extract_features, axis=1).tolist()
+  predictions = [analyze_data(feature) for feature in features]
+  df["prediction"] = predictions
+  print("Done, write predictions data into data folder!")
+  df.to_csv("data/analyzed_network_traffic.csv", index=False)

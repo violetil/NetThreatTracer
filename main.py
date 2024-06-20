@@ -57,7 +57,7 @@ def extract_features(packet):
   
 def process_packet(packet):
   if IP in packet:
-    protocol = packet[IP].ptoto
+    protocol = packet[IP].proto
     if protocol == 6:
       protocol = "TCP"
     elif protocol == 17:

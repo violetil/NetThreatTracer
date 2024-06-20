@@ -1,9 +1,11 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 import torch
+import numpy as np
+import pandas as pd
+import tkinter as tk
+import matplotlib.pyplot as plt
 from torch import nn
 from scapy.all import sniff, IP
+from tkinter import messagebox
 
 class NetworkTrafficModel(nn.Module):
   def __init__(self):
@@ -76,7 +78,8 @@ def packet_callback(packet):
   process_packet(packet)
 
 
-if __name__ == "__main__":
+def start_detection():
+  messagebox.showinfo("Info", "Network detection started")
   print("Start capture network traffic data...")
   sniff(prn=packet_callback, store=0, count=100)
   df = pd.DataFrame(packet_data)
@@ -91,3 +94,19 @@ if __name__ == "__main__":
   df.to_csv("data/analyzed_network_traffic.csv", index=False)
 
   visualize_data(df)
+
+  
+def stop_detection():
+  messagebox.showinfo("Info", "Network detection stopped")
+
+  
+root = tk.Tk()
+root.title("NetThreatTracer")
+
+start_button = tk.Button(root, text="Start Detection", command=start_detection)
+start_button.pack(pady=10)
+
+stop_button = tk.Button(root, text="Stop Detection", command=stop_detection)
+stop_button.pack(pady=10)
+
+root.mainloop()

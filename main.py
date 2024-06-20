@@ -35,4 +35,4 @@ if __name__ == "__main__":
   sniff(prn=packet_callback, store=0, count=100)
   df = pd.DataFrame(packet_data)
   print("Done, write into csv file.")
-  df.to_csv("temp/network_traffic.csv", index=False)
+  df.to_csv("data/network_traffic.csv", index=False)

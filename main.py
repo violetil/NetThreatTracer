@@ -1,15 +1,26 @@
-from scapy.all import sniff, IP
 import pandas as pd
+import torch
+from torch import nn
+from scapy.all import sniff, IP
+
 
 packet_data = []
 
+  
 def process_packet(packet):
   if IP in packet:
+    protocol = packet[IP].ptoto
+    if protocol == 6:
+      protocol = "TCP"
+    elif protocol == 17:
+      protocol = "UDP"
+    else:
+      protocol = "Other"
     data = {
       "timestamp": packet.time,
       "src_ip": packet[IP].src,
       "dst_ip": packet[IP].dst,
-      "protocol": packet.proto,
+      "protocol": protocol,
       "length": len(packet)
     }
     packet_data.append(data)

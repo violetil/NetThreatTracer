@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import torch
 from torch import nn
 from scapy.all import sniff, IP
@@ -21,6 +22,17 @@ model.load_state_dict(torch.load("models/model.pth"))
 model.eval()
     
 packet_data = []
+
+
+def visualize_data(df):
+  plt.figure(figsize=(10, 5))
+  plt.plot(df["timestamp"], df["length"], label="Packet length")
+  plt.scatter(df["timestamp"], df["prediction"], color="red", label="Predicted Attck Type")
+  plt.xlabel("Time")
+  plt.ylabel("Packet Length / Attack Type")
+  plt.title("Network Traffic and Attck Prediction")
+  plt.legend()
+  plt.show()
 
 
 def analyze_data(data):
@@ -77,3 +89,5 @@ if __name__ == "__main__":
   df["prediction"] = predictions
   print("Done, write predictions data into data folder!")
   df.to_csv("data/analyzed_network_traffic.csv", index=False)
+
+  visualize_data(df)

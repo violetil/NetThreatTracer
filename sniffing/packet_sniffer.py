@@ -1,11 +1,16 @@
 import threading
-from collections import deque
 import pandas as pd
+from queue import Queue
 from scapy.all import sniff, IP
+from analysis.features_proj import extract_features
+from analysis.model_analysis import analyze_data
 
-packets_data = deque(maxlen=10000)
-buffer_size = 100
+packets_data = []
+predicted_packets_data = []
+prediction_queue = Queue()
+buffer_size = 10
 buffer = []
+running = threading.Event()
 
 def process_packet(packet):
   global buffer
@@ -26,9 +31,16 @@ def process_packet(packet):
     }
     buffer.append(data)
     if len(buffer) >= buffer_size:
+      print("Buffer full, recored!")
       packets_data.extend(buffer)
+      extend_queue(prediction_queue, buffer)
       buffer = []
-      save_to_csv(packets_data)
+      # save_to_csv(packets_data)
+
+      
+def extend_queue(q, items):
+  for item in items:
+    q.put(item)
 
 
 def save_to_csv(data):
@@ -37,9 +49,23 @@ def save_to_csv(data):
 
     
 def start_sniffing():
-  sniff(prn=process_packet, store=0, count=20)
+  while running.is_set():
+    sniff(prn=process_packet, store=0, timeout=1)
 
   
 def start_sniffing_thread():
+  running.set()
   sniff_thread = threading.Thread(target=start_sniffing)
   sniff_thread.start()
+  return sniff_thread
+
+  
+def predict_from_queue():
+  while running.is_set():
+    if not prediction_queue.empty():
+      data = prediction_queue.get()
+      features = extract_features(data)
+      prediction = analyze_data(features)
+      data['prediction'] = prediction
+      predicted_packets_data.append(data)
+      prediction_queue.task_done()

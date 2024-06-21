@@ -1,3 +1,4 @@
+import threading
 from scapy.all import sniff, IP
 
 packets_data = []
@@ -23,3 +24,8 @@ def process_packet(packet):
     
 def start_sniffing():
   sniff(prn=process_packet, store=0, count=20)
+
+  
+def start_sniffing_thread():
+  sniff_thread = threading.Thread(target=start_sniffing)
+  sniff_thread.start()

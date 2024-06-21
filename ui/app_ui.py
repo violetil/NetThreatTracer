@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox 
-from sniffing.packet_sniffer import start_sniffing, packets_data
+from sniffing.packet_sniffer import start_sniffing_thread, packets_data
 from analysis.features_proj import extract_features
 from analysis.model_analysis import analyze_data
 from visualization.visualizer import visualize_data
@@ -10,10 +10,8 @@ import pandas as pd
 def start_detection():
   messagebox.showinfo("Info", "Network detection started")
   print("Start sniffing...")
-  start_sniffing()
+  start_sniffing_thread()
   df = pd.DataFrame(packets_data)
-  print("Done sniffing!")
-  df.to_csv("data/network_traffic.csv", index=False)
   
   features = df.apply(extract_features, axis=1).tolist()
   print("Start prediction...")

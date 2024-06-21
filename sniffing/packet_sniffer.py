@@ -1,9 +1,14 @@
 import threading
+from collections import deque
+import pandas as pd
 from scapy.all import sniff, IP
 
-packets_data = []
+packets_data = deque(maxlen=10000)
+buffer_size = 100
+buffer = []
 
 def process_packet(packet):
+  global buffer
   if IP in packet:
     protocol = packet[IP].proto
     if protocol == 6:
@@ -19,8 +24,17 @@ def process_packet(packet):
       'protocol': protocol,
       'length': len(packet)
     }
-    packets_data.append(data)
-    
+    buffer.append(data)
+    if len(buffer) >= buffer_size:
+      packets_data.extend(buffer)
+      buffer = []
+      save_to_csv(packets_data)
+
+
+def save_to_csv(data):
+  df = pd.DataFrame(data)
+  df.to_csv("data/network_traffic.csv", index=False)
+
     
 def start_sniffing():
   sniff(prn=process_packet, store=0, count=20)

@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from sniffing.packet_sniffer import start_sniffing_thread, predict_from_queue, predicted_packets_data, running
+from sniffing.packet_sniffer import start_sniffing_thread, predict_from_queue, packets_data, running
 from visualization.visualizer import visualize_data
 import pandas as pd
 import threading
@@ -51,7 +51,7 @@ class NetThreatTracerApp:
     sniff_thread.join()
     predict_thread.join()
     
-    predicted_df = pd.DataFrame(predicted_packets_data)
+    predicted_df = pd.DataFrame(packets_data)
     predicted_df.to_csv("data/analyzed_network_traffic.csv", index=False)
     
     visualize_data(predicted_df)
@@ -59,7 +59,7 @@ class NetThreatTracerApp:
     self.status_label.config(text="Status: Stopped")
 
   def update_status(self):
-    self.packet_count_label.config(text=f"Packets Captured: {len(predicted_packets_data)}")
+    self.packet_count_label.config(text=f"Packets Captured: {len(packets_data)}")
     if running.is_set():
       self.status_label.config(text="Status: Running")
     else:

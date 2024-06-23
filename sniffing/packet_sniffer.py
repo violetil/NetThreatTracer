@@ -31,7 +31,7 @@ def process_packet(packet):
     }
     buffer.append(data)
     if len(buffer) >= buffer_size:
-      print("Buffer full, recored!")
+      # print("Buffer full, recored!")
       packets_data.extend(buffer)
       extend_queue(prediction_queue, buffer)
       buffer = []
@@ -68,4 +68,5 @@ def predict_from_queue():
       prediction = analyze_data(features)
       data['prediction'] = prediction
       predicted_packets_data.append(data)
+      # print("Get prediction")
       prediction_queue.task_done()

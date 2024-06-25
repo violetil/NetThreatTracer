@@ -1,19 +1,25 @@
 import torch
 from torch import nn
 
-
 class NetworkTrafficModel(nn.Module):
   def __init__(self):
     super(NetworkTrafficModel, self).__init__()
     self.fc1 = nn.Linear(5, 50)
-    self.fc2 = nn.Linear(50, 3) # Suppose have three types network traffic (normal, attck type1, attck type2)
-
+    self.fc2 = nn.Linear(50, 3)
+    
   def forward(self, x):
     x = torch.relu(self.fc1(x))
     x = self.fc2(x)
     return x
-  
 
-# Save the model state dict
+    
 model = NetworkTrafficModel()
-torch.save(model.state_dict(), "models/model.pth")
+model.load_state_dict(torch.load("models/model.pth"))
+model.eval()
+
+
+def analyze_data(data):
+  with torch.inference_mode():
+    input_data = torch.tensor(data).float()
+    output = model(input_data)
+    return output.argmax().item()

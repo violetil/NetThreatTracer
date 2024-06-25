@@ -11,6 +11,3 @@ matplotlib
 
 # Deep learning model creation
 torch
-
-# Python graphic user interface tools
-tk

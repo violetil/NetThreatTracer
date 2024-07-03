@@ -1,8 +1,10 @@
 import threading
-from sniffing.packet_processor import start_sniffing, packets_data, prediction_queue, running
+from sniffing.packet_processor import start_sniffing, prediction_queue, running
 from analysis.model_analysis import analyze_data
 from analysis.features_proj import extract_model_features
 
+
+packets_data = []
   
 def start_sniffing_thread():
   running.set()
@@ -18,4 +20,5 @@ def predict_from_queue():
       features = extract_model_features(data)
       prediction = analyze_data(features)
       data['prediction'] = prediction
+      packets_data.append(data)
       prediction_queue.task_done()

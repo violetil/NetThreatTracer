@@ -7,7 +7,6 @@ from analysis.features_proj import extract_model_features
 packets_data = []
   
 def start_sniffing_thread():
-  running.set()
   sniff_thread = threading.Thread(target=start_sniffing)
   sniff_thread.start()
   return sniff_thread

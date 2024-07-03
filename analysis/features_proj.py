@@ -3,7 +3,7 @@ def extract_model_features(packet):
     packet['dst_port'],
     packet['flow_duration'],
     packet['fwd_packets'],
-    packet['bwd_packest'],
+    packet['bwd_packets'],
     packet['fwd_bytes'],
     packet['bwd_bytes'],
     packet['fwd_len_max'],
@@ -77,6 +77,6 @@ def extract_model_features(packet):
     packet['idle_mean'],
     packet['idle_std'],
     packet['idle_max'],
-    packet['idel_min']
+    packet['idle_min']
   ]
   return features

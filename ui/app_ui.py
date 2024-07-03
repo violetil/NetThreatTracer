@@ -42,14 +42,14 @@ class NetThreatTracerApp:
     self.status_label.config(text="Status: Running")
     print("Start sniffing network traffic...")
     sniff_thread = start_sniffing_thread()
-    # predict_thread = threading.Thread(target=predict_from_queue, daemon=True)
-    # predict_thread.start()
+    predict_thread = threading.Thread(target=predict_from_queue, daemon=True)
+    predict_thread.start()
     
   def stop_detection(self):
     global sniff_thread, predict_thread
     running.clear()
     sniff_thread.join()
-    # predict_thread.join()
+    predict_thread.join()
     
     predicted_df = pd.DataFrame(packets_data)
     predicted_df.to_csv("data/analyzed_network_traffic.csv", index=False)

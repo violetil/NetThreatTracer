@@ -1,6 +1,9 @@
 # Temp file
 temp/
 
+# jupyter notebooks
+ipynbs/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

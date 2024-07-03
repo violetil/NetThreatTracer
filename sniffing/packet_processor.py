@@ -8,7 +8,6 @@ from sniffing.feature_extractor import extract_flow_features
 running = threading.Event()
 
 
-packets_data = []
 prediction_queue = Queue()
 
 buffer = []
@@ -47,7 +46,6 @@ def process_packet(packet):
       buffer_flow_ids[flow_id] = len(buffer) - 1
       
     if len(buffer) > buffer_size:
-      packets_data.extend(buffer)
       extend_queue(prediction_queue, buffer)
       buffer.clear()
       buffer_flow_ids.clear()

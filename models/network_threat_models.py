@@ -2,7 +2,7 @@ from torch import nn
 import torch
 
 
-input_size = 79
+input_size = 78
 num_classes = 15
 
 

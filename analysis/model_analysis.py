@@ -13,8 +13,15 @@ net_threat_model_v1.load_state_dict(torch.load("models/net_threat_model_v1.pth")
 net_threat_model_v1.eval()
 
 
-def analyze_data(data):
+def analyze_data_model0(data):
   with torch.inference_mode():
     input_data = torch.tensor(data).float()
+    output = net_threat_model_v0(input_data)
+    return output.argmax().item()
+
+    
+def analyze_data_model1(data):
+  with torch.inference_mode():
+    input_data = torch.tensor(data).float().unsqueeze(0)
     output = net_threat_model_v1(input_data)
     return output.argmax().item()

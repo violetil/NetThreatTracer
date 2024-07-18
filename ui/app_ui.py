@@ -54,7 +54,7 @@ class NetThreatTracerApp:
     predicted_df = pd.DataFrame(packets_data)
     predicted_df.to_csv("data/analyzed_network_traffic.csv", index=False)
     
-    visualize_data(predicted_df)
+    # visualize_data(predicted_df)
     self.log_text.insert(tk.END, "Network detection stopped\n")
     self.status_label.config(text="Status: Stopped")
 

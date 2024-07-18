@@ -11,3 +11,6 @@ matplotlib
 
 # Deep learning model creation
 torch
+
+request
+

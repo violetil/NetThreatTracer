@@ -5,6 +5,11 @@ import torch
 input_size = 78
 num_classes = 15
 
+autoencoder_hidden_dim = 32
+
+lstm_hidden_dim = 64
+lstm_num_layers = 2
+
 
 class NetThreatModelV0(nn.Module):
   def __init__(self, input_size, num_classes):
@@ -63,3 +68,17 @@ class Autoencoder(nn.Moduel):
     encoded = self.encoder(x)
     decoded = self.decoder(encoded)
     return encoded, decoded
+
+    
+class LSTMModel(nn.Module):
+  def __init__(self, input_dim, hidden_dim, num_layers, output_dim):
+    super(LSTMModel, self).__init__()
+    self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers, batch_first=True)
+    self.fc = nn.Linear(hidden_dim, output_dim)
+    
+  def forward(self, x):
+    h0 = torch.zeros(lstm_num_layers, x.size(0), lstm_hidden_dim).to(x.device)
+    c0 = torch.zeros(lstm_num_layers, x.size(0), lstm_hidden_dim).to(x.device)
+    out, _ = self.lstm(x, (h0, c0))
+    out = self.fc(out[:, -1, :])
+    return out

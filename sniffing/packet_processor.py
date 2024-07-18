@@ -3,6 +3,7 @@ from scapy.all import sniff, IP, TCP, UDP
 from queue import Queue
 from sniffing.flow_manager import get_flow_id, update_flow, remove_old_flows
 from sniffing.feature_extractor import extract_flow_features
+from analysis.tracer_behavior_path import log_event
 
 
 running = threading.Event()
@@ -18,6 +19,8 @@ buffer_flow_ids = {}
 def process_packet(packet):
   global buffer
   if IP in packet:
+    src_ip = packet[IP].src
+    dst_ip = packet[IP].dst
     protocol = packet[IP].proto
     if protocol == 6:
       protocol = "TCP"
@@ -34,6 +37,17 @@ def process_packet(packet):
     
     flow_id = get_flow_id(packet, protocol, src_port, dst_port)
     timestamp = packet.time
+    event_type = 'unknown'
+    
+    if packet.haslayer("TCP"):
+      event_type = "tcp_connection"
+      if packet["TCP"].dport == 80 or packet["TCP"].sport == 80:
+        event_type = "http_request"
+    elif packet.haslayer("UDP"):
+      if packet.haslayer("DNS"):
+        event_type = "dns_query"
+        
+    log_event(timestamp, src_ip, event_type, dst_ip)
     
     flow = update_flow(packet, flow_id, timestamp, protocol)
     remove_old_flows()

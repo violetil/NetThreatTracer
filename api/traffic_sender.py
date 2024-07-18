@@ -16,7 +16,7 @@ def convert_to_serializable(data):
         return data
 
 def send_traffic_data(computer_id, traffic_data):
-    url = f'http://178.128.209.118:5000/api/computers/{computer_id}/traffic'
+    url = f'http://localhost:5000/api/computers/{computer_id}/traffic'
     headers = {'Content-Type': 'application/json'}
     traffic_data_serializable = convert_to_serializable(traffic_data)
     response = requests.post(url, data=json.dumps(traffic_data_serializable), headers=headers)

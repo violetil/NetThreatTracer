@@ -9,7 +9,7 @@ def get_computer_name_and_ip():
     return hostname, ip_address
 
 def register_computer():
-    url = 'http://localhost:5000/api/computers'
+    url = 'http://178.128.209.118:5000/api/computers'
     name, ip = get_computer_name_and_ip()
     data = {'name': name, 'ip': ip}
     headers = {'Content-Type': 'application/json'}

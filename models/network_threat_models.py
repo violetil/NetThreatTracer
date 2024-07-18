@@ -52,7 +52,7 @@ class NetThreatModelV1(nn.Module):
     return x
 
     
-class Autoencoder(nn.Moduel):
+class Autoencoder(nn.Module):
   def __init__(self, input_dim, hidden_dim):
     super(Autoencoder, self).__init__()
     self.encoder = nn.Sequential(

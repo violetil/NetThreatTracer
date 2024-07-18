@@ -21,8 +21,8 @@ lstm_model = LSTMModel(input_size, lstm_hidden_dim, lstm_num_layers, num_classes
 cnn_model = CNNModel(input_size, num_classes)
 
 autoencoder.load_state_dict(torch.load("models/autoencoder.pth"))
-lstm_model.load_state_dict(torch.load("lstm_model.pth"))
-cnn_model.load_state_dict(torch.load("cnn_model.pth"))
+lstm_model.load_state_dict(torch.load("models/lstm_model.pth"))
+cnn_model.load_state_dict(torch.load("models/cnn_model.pth"))
 
 autoencoder.eval()
 lstm_model.eval()
@@ -44,14 +44,23 @@ def analyze_data_model1(data):
 
     
 def analyze_data_model2(data):
-  input_data = torch.tensor(data).float()
-  with torch.inference_model():
-    encoded_features, _ = autoencoder(input_data)
-    lstm_input = encoded_features.unsqueeze(1) # Add time dimension
-    cnn_input = encoded_features.unsqueeze(1) # Add channel dimension
-    lstm_probabilities = torch.softmax(lstm_model(lstm_input), dim=1)
-    cnn_probabilities = torch.softmax(cnn_model(cnn_input), dim=1)
-    # Combine the result
+  input_data = torch.tensor(data, dtype=torch.float32).unsqueeze(0) # [1, 78]
+  
+  with torch.inference_mode():
+    # 使用自编码器提取特征
+    encoded_features, decoded_features = autoencoder(input_data) # [1, 32]
+    
+    # LSTM 输入处理
+    lstm_input = decoded_features.unsqueeze(0)  # [1, 1, 32]
+    lstm_predictions = lstm_model(lstm_input)
+    lstm_probabilities = torch.softmax(lstm_predictions, dim=1)
+    
+    # CNN 输入处理
+    cnn_input = decoded_features.unsqueeze(1)  # 添加通道维度
+    cnn_predictions = cnn_model(cnn_input)
+    cnn_probabilities = torch.softmax(cnn_predictions, dim=1)
+    
+    # 综合结果
     combined_predictions = (lstm_probabilities + cnn_probabilities) / 2
     combined_predicted_classes = torch.argmax(combined_predictions, dim=1).numpy().item()
     return combined_predicted_classes

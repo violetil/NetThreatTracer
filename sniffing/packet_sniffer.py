@@ -1,6 +1,6 @@
 import threading
 from sniffing.packet_processor import start_sniffing, prediction_queue, running
-from analysis.model_analysis import analyze_data_model0, analyze_data_model1
+from analysis.model_analysis import analyze_data_model2
 from analysis.features_proj import extract_model_features
 
 
@@ -17,7 +17,7 @@ def predict_from_queue():
     if not prediction_queue.empty():
       data = prediction_queue.get()
       features = extract_model_features(data)
-      prediction = analyze_data_model1(features)
+      prediction = analyze_data_model2(features)
       data['prediction'] = prediction
       packets_data.append(data)
       prediction_queue.task_done()

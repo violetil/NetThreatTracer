@@ -33,11 +33,25 @@ def analyze_data_model0(data):
   with torch.inference_mode():
     input_data = torch.tensor(data).float()
     output = net_threat_model_v0(input_data)
-    return output.argmax().item()
+    return output.argmax().numpy().item()
 
     
 def analyze_data_model1(data):
   with torch.inference_mode():
     input_data = torch.tensor(data).float().unsqueeze(0)
     output = net_threat_model_v1(input_data)
-    return output.argmax().item()
+    return output.argmax().numpy().item()
+
+    
+def analyze_data_model2(data):
+  input_data = torch.tensor(data).float()
+  with torch.inference_model():
+    encoded_features, _ = autoencoder(input_data)
+    lstm_input = encoded_features.unsqueeze(1) # Add time dimension
+    cnn_input = encoded_features.unsqueeze(1) # Add channel dimension
+    lstm_probabilities = torch.softmax(lstm_model(lstm_input), dim=1)
+    cnn_probabilities = torch.softmax(cnn_model(cnn_input), dim=1)
+    # Combine the result
+    combined_predictions = (lstm_probabilities + cnn_probabilities) / 2
+    combined_predicted_classes = torch.argmax(combined_predictions, dim=1).numpy().item()
+    return combined_predicted_classes

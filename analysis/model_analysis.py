@@ -44,6 +44,10 @@ def analyze_data_model1(data):
 
     
 def analyze_data_model2(data):
+  if data is None:
+    print("Input data is None. Cannot proceed.")
+    return
+  
   input_data = torch.tensor(data, dtype=torch.float32).unsqueeze(0) # [1, 78]
   
   with torch.inference_mode():

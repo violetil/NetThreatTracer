@@ -8,6 +8,7 @@ from api.network_registration import get_computer_id
 from analysis.tracer_behavior_path import reconstruct_attack_path
 import json
 import pandas as pd
+from models.network_threat_models import label_mapping
 
 
 packets_data = []
@@ -24,18 +25,19 @@ def predict_from_queue():
       data = prediction_queue.get()
       features = extract_model_features(data)
       prediction = analyze_data_model2(features)
-      data['prediction'] = prediction
+      data['prediction'] = label_mapping[prediction]
       
       computer_id = get_computer_id()
       send_traffic_data(computer_id, data)
       
-      # 从本地文件加载日志数据
-      with open('data/log.json', 'r') as log_file:
-        logs = [json.loads(line) for line in log_file]
-        
-      log_df = pd.DataFrame(logs)
-      attack_path = reconstruct_attack_path(log_df, data['src_ip'], data['dst_ip'])
-      send_event_to_backend(attack_path)
+      if prediction != 0:
+        # 从本地文件加载日志数据
+        with open('data/log.json', 'r') as log_file:
+          logs = [json.loads(line) for line in log_file]
+          
+        log_df = pd.DataFrame(logs)
+        attack_path = reconstruct_attack_path(log_df, data['src_ip'], data['dst_ip'])
+        send_event_to_backend(computer_id, attack_path)
       
       packets_data.append(data)
       prediction_queue.task_done()

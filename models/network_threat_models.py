@@ -45,3 +45,21 @@ class NetThreatModelV1(nn.Module):
     x = self.drop3(x)
     x = self.fc4(x)
     return x
+
+    
+class Autoencoder(nn.Moduel):
+  def __init__(self, input_dim, hidden_dim):
+    super(Autoencoder, self).__init__()
+    self.encoder = nn.Sequential(
+      nn.Linear(input_dim, hidden_dim),
+      nn.ReLU(),
+    )
+    self.decoder = nn.Sequential(
+      nn.Linear(hidden_dim, input_dim),
+      nn.ReLU(),
+    )
+
+  def forward(self, x):
+    encoded = self.encoder(x)
+    decoded = self.decoder(encoded)
+    return encoded, decoded

@@ -4,7 +4,9 @@
 scapy
 
 # Manipulate and analyze the data
-numpy, pandas
+numpy
+
+pandas
 
 # Visualization
 matplotlib
